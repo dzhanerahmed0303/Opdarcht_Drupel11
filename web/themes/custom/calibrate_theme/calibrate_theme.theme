@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @file
+ * Theme hooks for Calibrate Theme.
+ */
+
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_preprocess_html().
+ *
+ * Adds body classes (the theme has no base theme, so these are not
+ * provided automatically).
+ */
+function calibrate_theme_preprocess_html(array &$variables) {
+  $current_path = \Drupal::service('path.current')->getPath();
+  $alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+
+  // Listing pages.
+  $map = [
+    '/news' => 'path-news',
+    '/articles' => 'path-articles',
+    '/offices' => 'path-offices',
+  ];
+  if (isset($map[$alias])) {
+    $variables['attributes']['class'][] = $map[$alias];
+    $variables['attributes']['class'][] = 'is-listing';
+  }
+
+  // Front page.
+  if (\Drupal::service('path.matcher')->isFrontPage()) {
+    $variables['attributes']['class'][] = 'is-front';
+  }
+
+  // Node detail pages.
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($node instanceof NodeInterface) {
+    $variables['attributes']['class'][] = 'page-node-type-' . $node->bundle();
+  }
+
+  // Taxonomy term pages.
+  $term = \Drupal::routeMatch()->getParameter('taxonomy_term');
+  if ($term) {
+    $variables['attributes']['class'][] = 'page-taxonomy-term';
+    $variables['attributes']['class'][] = 'is-listing';
+  }
+}

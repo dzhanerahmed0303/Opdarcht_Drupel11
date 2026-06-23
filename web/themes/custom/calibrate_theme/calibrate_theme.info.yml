@@ -1,0 +1,13 @@
+name: Calibrate Theme
+type: theme
+description: Custom theme for Calibrate
+core_version_requirement: ^11
+base theme: false
+libraries:
+  - calibrate_theme/global
+regions:
+  hero: Hero banner
+  header: Header
+  primary_menu: Primary menu
+  content: Content
+  footer: Footer

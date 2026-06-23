@@ -1,0 +1,56 @@
+{# Article detail page — wireframe page 5 #}
+<article{{ attributes.addClass('node', 'node--type-article', 'node--full') }}>
+
+  {# Hero: full-width image with title overlay #}
+  <div class="node__hero">
+    {% if content.field_image %}
+      {{ content.field_image }}
+    {% endif %}
+    <div class="node__hero-title">
+      <h1>{{ label }}</h1>
+    </div>
+  </div>
+
+  <div class="node__inner">
+    <div class="back-link">
+      <a href="/articles">&lt; {{ 'back to overview'|t }}</a>
+    </div>
+
+    {# Two-column: image left, body right #}
+    <div class="node__columns">
+      <div class="node__col-image">
+        {{ content.field_image }}
+      </div>
+      <div class="node__col-body">
+        {{ content.body }}
+
+        {% if content.field_tags %}
+          <div class="node__tags">
+            <strong>{{ 'Tags'|t }}:</strong>
+            {{ content.field_tags }}
+          </div>
+        {% endif %}
+
+        {# Country comes from the linked office — wireframe shows "Country: Belgium" #}
+        {% if node.field_office.entity.field_country.entity.label %}
+          <div class="node__country">
+            <strong>{{ 'Country'|t }}:</strong>
+            {{ node.field_office.entity.field_country.entity.label }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# Related articles section #}
+  <div class="node__related">
+    <div class="node__related-header">
+      <h2>{{ 'Related articles'|t }}</h2>
+      <a href="/articles" class="more-link">{{ 'more articles'|t }} &gt;</a>
+    </div>
+    <div class="node__related-grid">
+      {{ drupal_view('articles', 'block_1') }}
+    </div>
+  </div>
+
+</article>

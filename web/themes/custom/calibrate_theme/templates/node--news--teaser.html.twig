@@ -1,0 +1,13 @@
+<article{{ attributes.addClass('node', 'node--type-news', 'node--teaser') }}>
+  {% if content.field_news_image %}
+    <div class="teaser__image">{{ content.field_news_image }}</div>
+  {% endif %}
+  <div class="teaser__body">
+    <h3 class="teaser__title">
+      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+    </h3>
+    {% if content.field_body %}
+      <div class="teaser__excerpt">{{ content.field_body }}</div>
+    {% endif %}
+  </div>
+</article>

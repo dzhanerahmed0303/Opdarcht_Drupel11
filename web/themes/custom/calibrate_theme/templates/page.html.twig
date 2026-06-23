@@ -1,0 +1,29 @@
+{# Hero banner — full width, above the header (wireframes: big image on top of every page) #}
+<div class="hero-banner{% if is_front %} hero-banner--large{% endif %}">
+  {{ page.hero }}
+</div>
+
+<header id="site-header">
+  <nav>
+    <div class="logo">
+      <a href="{{ path('<front>') }}">Calibrate</a>
+    </div>
+    <div class="menu">
+      {{ page.primary_menu }}
+    </div>
+  </nav>
+</header>
+
+<main id="main-content"{% if is_front %} class="is-homepage"{% endif %}>
+  {% if page.highlighted %}
+    <div class="highlighted">{{ page.highlighted }}</div>
+  {% endif %}
+  {{ page.content }}
+</main>
+
+<footer>
+  <div class="footer-inner">
+    {{ page.footer }}
+    <p>&copy; {{ 'now'|date('Y') }} Calibrate</p>
+  </div>
+</footer>

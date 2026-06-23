@@ -1,0 +1,38 @@
+{# News detail page — wireframe page 3 / page 8 #}
+<article{{ attributes.addClass('node', 'node--type-news', 'node--full') }}>
+
+  {# Hero: full-width image with title overlay #}
+  <div class="node__hero">
+    {% if content.field_news_image %}
+      {{ content.field_news_image }}
+    {% endif %}
+    <div class="node__hero-title">
+      <h1>{{ label }}</h1>
+    </div>
+  </div>
+
+  <div class="node__inner">
+    <div class="back-link">
+      <a href="/news">&lt; {{ 'back to overview'|t }}</a>
+    </div>
+
+    {# Two-column: image left, body right #}
+    <div class="node__columns">
+      <div class="node__col-image">
+        {{ content.field_news_image }}
+      </div>
+      <div class="node__col-body">
+        {{ content.field_body }}
+      </div>
+    </div>
+  </div>
+
+  {# Related news section #}
+  <div class="node__related">
+    <h2>{{ 'Related news'|t }}</h2>
+    <div class="node__related-grid">
+      {{ drupal_view('news', 'block_related') }}
+    </div>
+  </div>
+
+</article>
