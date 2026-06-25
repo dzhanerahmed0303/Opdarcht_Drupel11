@@ -376,10 +376,18 @@ body.is-listing .views-exposed-form {
 
     // Image fills card top
     .views-field-field-news-image img,
-    .views-field-field-image img,
-    .views-field-field-office-image img {
+    .views-field-field-image img {
       width: 100%;
       height: 200px;
+      object-fit: cover;
+      display: block;
+      transition: transform .5s $ease;
+    }
+
+    // Office cards: smaller image — contact info is the focus
+    .views-field-field-office-image img {
+      width: 100%;
+      height: 150px;
       object-fit: cover;
       display: block;
       transition: transform .5s $ease;
@@ -613,10 +621,17 @@ body.is-listing .views-exposed-form {
     p { margin-bottom: 1.1em; }
   }
 
-  // Office: contact details
+  // Office: contact details — image capped so it doesn't dominate the page
   &.node__columns--office .node__col-image {
-    flex: 0 0 46%;
-    max-width: 46%;
+    flex: 0 0 40%;
+    max-width: 40%;
+
+    img {
+      aspect-ratio: unset;
+      max-height: 300px;
+      width: 100%;
+      object-fit: cover;
+    }
   }
 
   @media (max-width: 768px) {
@@ -941,6 +956,126 @@ body.is-listing .views-exposed-form {
       background: $color-bg-soft;
       border-radius: 0 $radius $radius 0;
     }
+  }
+}
+
+// =============================================================
+// CONTACT PAGE — webform at /form/contact*
+// =============================================================
+.path-frontpage ~ main,
+main:has(.webform-submission-form) {
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+
+.webform-submission-form {
+  max-width: 680px;
+  margin: 0 auto;
+
+  // Section title above the form
+  &::before {
+    content: 'Stuur ons een bericht';
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    color: $color-heading;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid $color-accent;
+    letter-spacing: -.02em;
+  }
+
+  .form-item {
+    margin-bottom: 20px;
+
+    label {
+      display: block;
+      font-size: .9rem;
+      font-weight: 600;
+      color: $color-heading;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid $color-border;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: $font-base;
+      color: $color-text;
+      background: #fff;
+      transition: border-color .2s $ease, box-shadow .2s $ease;
+      outline: none;
+
+      &:focus {
+        border-color: $color-accent;
+        box-shadow: 0 0 0 3px rgba($color-accent, .12);
+      }
+
+      &::placeholder { color: #aab4be; }
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+  }
+
+  .form-actions {
+    margin-top: 28px;
+
+    button[type="submit"],
+    input[type="submit"] {
+      background: $color-accent;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 36px;
+      font-size: 1rem;
+      font-family: $font-base;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba($color-accent, .3);
+      transition: background .2s $ease, transform .2s $ease, box-shadow .2s $ease;
+
+      &:hover {
+        background: $color-accent-bright;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba($color-accent, .4);
+      }
+      &:active { transform: translateY(0); }
+    }
+  }
+
+  // Required field indicator
+  .form-required { color: $color-accent; margin-left: 2px; }
+
+  // Confirmation message after submit
+  .webform-confirmation {
+    padding: 24px;
+    background: rgba($color-accent, .08);
+    border: 1px solid rgba($color-accent, .2);
+    border-radius: $radius;
+    color: $color-accent;
+    font-weight: 600;
+    text-align: center;
+  }
+}
+
+// Page wrapper for /form/* pages
+body:not(.is-front):not(.is-listing):not(.page-node-type-article):not(.page-node-type-news):not(.page-node-type-office):not(.page-node-type-page) {
+  main > .layout-container,
+  main > div {
+    max-width: $max-width;
+    margin: 0 auto;
+    padding: 48px 24px 72px;
   }
 }
 
