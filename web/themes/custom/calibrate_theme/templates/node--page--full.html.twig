@@ -2,7 +2,9 @@
   <div class="page-node__inner">
     <h1>{{ label }}</h1>
     <div class="page-node__body">
-      {{ content.body }}
+      {# Render all of content: with Layout Builder enabled the body and
+         blocks live inside content._layout_builder, not content.body. #}
+      {{ content }}
     </div>
   </div>
 </article>

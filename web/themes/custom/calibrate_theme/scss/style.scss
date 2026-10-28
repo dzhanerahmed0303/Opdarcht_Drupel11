@@ -227,6 +227,10 @@ main.is-homepage {
   margin-right: auto;
   padding: 48px 24px 60px;
 
+  // The front page has no title, but Drupal still renders an empty
+  // <h1> block that would sit in the flex row and offset the columns.
+  #block-calibrate-theme-page-title { display: none; }
+
   // Drupal wraps the content region in an extra <div>; that wrapper
   // is the flex container holding the two view blocks.
   > div {
@@ -845,10 +849,12 @@ body.is-listing .views-exposed-form {
 
   .teaser__image {
     overflow: hidden;
+    height: 180px;
     img {
       width: 100%;
-      height: 200px;
+      height: 100%;
       object-fit: cover;
+      object-position: center;
       display: block;
       transition: transform .5s $ease;
     }
@@ -887,12 +893,13 @@ body.is-listing .views-exposed-form {
     overflow: hidden;
   }
 
-  .teaser__tags {
+  .teaser__tags,
+  .teaser__country {
     margin-top: 12px;
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
-    a {
+    a, .field__item {
       display: inline-block;
       background: rgba($color-accent, .08);
       color: $color-accent;
@@ -956,6 +963,17 @@ body.is-listing .views-exposed-form {
       background: $color-bg-soft;
       border-radius: 0 $radius $radius 0;
     }
+  }
+
+  // Remote video (oEmbed iframe) — Drupal outputs it at 200x113,
+  // so stretch it to the column width at 16:9.
+  .media-oembed-content {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: $radius;
   }
 }
 
