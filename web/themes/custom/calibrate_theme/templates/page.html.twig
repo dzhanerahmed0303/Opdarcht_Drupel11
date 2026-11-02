@@ -6,7 +6,9 @@
 <header id="site-header">
   <nav>
     <div class="logo">
-      <a href="{{ path('<front>') }}">Calibrate</a>
+      <a href="{{ path('<front>') }}">
+      <img src="/{{ directory }}/images/logo.png" alt="Calibrate" class="logo__img">
+      </a>
     </div>
     <div class="menu">
       {{ page.primary_menu }}
@@ -23,7 +25,10 @@
 
 <footer>
   <div class="footer-inner">
-    {{ page.footer }}
+    <a class="footer-logo" href="{{ path('<front>') }}">
+    <img src="/{{ directory }}/images/logo.png" alt="Calibrate" class="logo__img">
+    </a>
+    {{ page.primary_menu }}  
     <p>&copy; {{ 'now'|date('Y') }} Calibrate</p>
   </div>
 </footer>

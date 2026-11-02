@@ -63,11 +63,14 @@ a {
 
   p { margin: 0; }
 
-  // Image fills the full width of the banner
+  // Image fills the full width of the banner. The height is capped and the
+  // photo cropped, so a 16:9 photo does not turn the hero into a full screen.
   img {
     display: block;
     width: 100%;
-    height: auto;
+    height: clamp(220px, 34vw, 440px);
+    object-fit: cover;
+    object-position: center 65%;
   }
 
   // Empty-state placeholder height (when no block is placed yet)
@@ -78,7 +81,9 @@ a {
 // ===== Header (sticky + shrink on scroll) =====
 #site-header {
   position: sticky;
-  top: 0;
+  // Drupal sets this variable when the admin toolbar is shown, so the
+  // header sticks below the toolbar instead of behind it.
+  top: var(--drupal-displace-offset-top, 0px);
   z-index: 1000;
   height: $header-height;
   background: rgba(255, 255, 255, .9);
@@ -158,11 +163,12 @@ footer {
   padding: 40px 24px;
   text-align: center;
 
-  .footer-inner { max-width: $max-width; margin: 0 auto; }
+  .footer-inner { max-width: $max-width; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap:10px; }
   a { color: #fff; transition: opacity .2s $ease; &:hover { opacity: .7; } }
 
   ul { list-style: none; display: flex; justify-content: center; gap: 32px; margin-bottom: 16px; }
-  .logo img { max-height: 40px; margin-bottom: 12px; }
+  // The logo is black on transparent, so turn it white on the dark footer
+  .footer-logo img { max-height: 56px; width: auto; margin-bottom: 12px; filter: brightness(0) invert(1); }
   p { font-size: .85rem; color: rgba(255,255,255,.55); margin-top: 8px; }
 }
 
@@ -230,6 +236,18 @@ main.is-homepage {
   // The front page has no title, but Drupal still renders an empty
   // <h1> block that would sit in the flex row and offset the columns.
   #block-calibrate-theme-page-title { display: none; }
+
+  // The front page is a "Home" basic page whose Layout Builder blocks (the
+  // video) sit below the two latest-blocks, on a full-width row of their
+  // own. Its title is not shown. The admin tabs also span the full row
+  // instead of becoming a column.
+  #block-calibrate-theme-content {
+    flex: 0 0 100%;
+    .page-node__inner { max-width: none; }
+    .page-node__inner > h1 { display: none; }
+    .page-node__body { max-width: 900px; margin: 0 auto; font-size: 1rem; }
+  }
+  #block-calibrate-theme-primary-local-tasks { flex: 0 0 100%; padding: 0; }
 
   // Drupal wraps the content region in an extra <div>; that wrapper
   // is the flex container holding the two view blocks.
@@ -331,10 +349,15 @@ body.is-listing #block-calibrate-theme-page-title h1 {
 }
 
 // Exposed filter sits top-right, aligned with the title (wireframe p.4 / p.6)
+// The grid wrapper is the positioning context. Drupal adds .contextual-region
+// (position: relative) to it for editors, so set it for everyone to keep the
+// filter in the same place for visitors and admins.
+body.is-listing .views-element-container > div { position: relative; }
+
 body.is-listing .views-exposed-form {
   position: absolute;
-  top: 40px;
-  right: 24px;
+  top: -78px;
+  right: 0;
   margin: 0;
   z-index: 5;
 }
@@ -343,6 +366,41 @@ body.is-listing .views-exposed-form {
   body.is-listing .views-exposed-form {
     position: static;
     margin-bottom: 24px;
+  }
+}
+
+// The listing views render without .view-content, so the grid hangs on the
+// wrapper that holds the exposed form, the rows and the pager.
+body.is-listing .views-element-container > div {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+
+  > form,
+  > .pager,
+  > nav,
+  > .view-header,
+  > .view-empty {
+    grid-column: 1 / -1;
+  }
+
+  // Exposed form is absolutely positioned top-right, keep it out of the grid flow
+  > form { margin: 0; }
+
+  .views-row {
+    background: #fff;
+    border: 1px solid $color-border;
+    border-radius: $radius;
+    overflow: hidden;
+    box-shadow: $shadow-sm;
+    transition: transform .3s $ease, box-shadow .3s $ease;
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: $shadow-lg;
+    }
   }
 }
 
@@ -481,6 +539,39 @@ body.is-listing .views-exposed-form {
   }
 
   .form-actions { margin: 0; }
+
+  // Better Exposed Filters "Links" widget: tag buttons (wireframe p.4).
+  // The links reload the page themselves, so the Apply button is redundant.
+  &:has(.bef-links) .form-actions { display: none; }
+
+  .bef-links ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .bef-link {
+    display: inline-block;
+    padding: 9px 20px;
+    border: 1px solid $color-border;
+    border-radius: 10px;
+    background: #fff;
+    color: $color-text;
+    font-size: .95rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: $shadow-sm;
+    transition: border-color .2s $ease, color .2s $ease, background .2s $ease;
+    &:hover { border-color: $color-accent-bright; color: $color-accent; }
+    &.bef-link--selected {
+      background: $color-accent;
+      border-color: $color-accent;
+      color: #fff;
+    }
+  }
 }
 
 // ===== Pagination =====
@@ -490,6 +581,17 @@ body.is-listing .views-exposed-form {
   gap: 6px;
   margin-top: 40px;
   list-style: none;
+
+  // Drupal prints the items in a <ul>; that list is the row, not the <nav>
+  .pager__items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 
   .pager__item a,
   .pager__item--current {
@@ -506,7 +608,9 @@ body.is-listing .views-exposed-form {
     &:hover { border-color: $color-accent; color: $color-accent; transform: translateY(-2px); }
   }
 
-  .pager__item--current {
+  // Drupal 11 marks the current page with .is-active
+  .pager__item--current,
+  .pager__item.is-active a {
     background: $color-accent;
     border-color: $color-accent;
     color: #fff;
@@ -595,6 +699,9 @@ body.is-listing .views-exposed-form {
 
     img {
       width: 100%;
+      // Drupal prints width/height attributes; without height: auto a tall
+      // portrait photo keeps its natural height and ignores aspect-ratio.
+      height: auto;
       aspect-ratio: 4 / 3;
       object-fit: cover;
       border-radius: $radius;
@@ -741,13 +848,19 @@ body.is-listing .views-exposed-form {
     max-width: $max-width;
     margin: 0 auto;
 
-    .view-content {
+    // The related views render without .view-content, so the grid sits on
+    // the wrapper that holds the rows. The block display also inherits the
+    // tag filter, which the wireframes do not show in this section.
+    .view-content,
+    .views-element-container > div {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
 
       @media (max-width: 768px) { grid-template-columns: 1fr; }
     }
+
+    .views-exposed-form { display: none; }
 
     .views-row {
       background: #fff;
@@ -850,6 +963,13 @@ body.is-listing .views-exposed-form {
   .teaser__image {
     overflow: hidden;
     height: 180px;
+    // Drupal wraps the <img> in extra divs / a link; they must fill the box
+    // or height: 100% on the image does not resolve and object-fit is ignored.
+    > div,
+    a {
+      display: block;
+      height: 100%;
+    }
     img {
       width: 100%;
       height: 100%;
@@ -885,12 +1005,20 @@ body.is-listing .views-exposed-form {
     color: $color-muted;
     line-height: 1.55;
     flex: 1;
-    // Clamp to ~3 lines so cards stay even height
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    // Clamp the first paragraph to ~3 lines so cards stay even height.
+    // line-clamp does not work across several block children, so the
+    // clamp sits on the paragraph and later paragraphs are hidden.
+    p {
+      margin: 0;
+      &:first-of-type {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      &:not(:first-of-type) { display: none; }
+    }
   }
 
   .teaser__tags,

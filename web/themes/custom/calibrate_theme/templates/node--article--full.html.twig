@@ -49,7 +49,7 @@
       <a href="/articles" class="more-link">{{ 'more articles'|t }} &gt;</a>
     </div>
     <div class="node__related-grid">
-      {{ drupal_view('articles', 'block_1') }}
+      {{ drupal_view('articles', 'block_related', node.id, node.field_tags.getValue()|column('target_id')|join('+')) }}
     </div>
   </div>
 

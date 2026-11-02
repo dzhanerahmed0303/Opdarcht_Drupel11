@@ -4,9 +4,9 @@
   if (!header) return;
 
   function onScroll() {
-    // Header shrinks once it has reached the top of the viewport
-    // (i.e. you scrolled past the hero banner above it).
-    var stuck = header.getBoundingClientRect().top <= 0;
+
+    var stickyTop = parseFloat(getComputedStyle(header).top) || 0;
+    var stuck = header.getBoundingClientRect().top <= stickyTop + 1;
     if (stuck) {
       header.classList.add('is-scrolled');
     } else {
@@ -18,3 +18,4 @@
   window.addEventListener('resize', onScroll);
   onScroll();
 })();
+
